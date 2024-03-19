@@ -14,8 +14,11 @@ This is a simple chat application that consists of a server and a client. The se
 2. Navigate to the directory containing the server code (`server.py`).
 3. Run the following command to start the server:
 ```commandline
-python server.py
+python server.py --server_ip <server_ip_address> --server_port <server_port_number>
 ```
+
+Replace `<server_ip_address>` with the IP address you'd like the server to listen on and `<server_port_number>` with the port number that the server should listen on.
+
 The server will start listening for incoming connections from clients.
 
 ## Client
@@ -30,8 +33,10 @@ The server will start listening for incoming connections from clients.
 2. Navigate to the directory containing the client code (`client.py`).
 3. Run the following command to start the client:
 ```commandline
-python client.py
+python client.py --server_ip <server_ip_address> --server_port <server_port_number>
 ```
+
+Replace `<server_ip_address>` with the IP address of the server and `<server_port_number>` with the port number that the server is listening on.
 
 By default, the client is set to be controlled by a human. You can use command line arguments to control the client behavior:
 
