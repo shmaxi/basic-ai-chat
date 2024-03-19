@@ -13,27 +13,30 @@ class TestServer(unittest.TestCase):
         # Create a socket object
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # Bind the socket to a specific IP and port
-        self.server_socket.bind(('127.0.0.1', 8888))
-
-        # Listen for incoming connections
-        self.server_socket.listen(5)
-
         # Create a message queue
         self.message_queue = Queue()
 
     def tearDown(self):
         # Close server socket
         self.server_socket.close()
+        self.server_socket = None
 
     def test_message_broadcast(self):
+        # Bind the socket to a specific IP and port
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server_socket.bind(('127.0.0.1', 7777))
+
+        # Listen for incoming connections
+        self.server_socket.listen(5)
+
         clients = []
         client_connections = []
+        chat_history = []
 
         # Mock client connections
         for _ in range(3):
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_socket.connect(('127.0.0.1', 8888))
+            client_socket.connect(('127.0.0.1', 7777))
             client_connection, client_addr = self.server_socket.accept()
             client_connections.append(client_connection)
             clients.append(client_socket)
@@ -45,7 +48,7 @@ class TestServer(unittest.TestCase):
         self.message_queue.put(test_message)
 
         # Start broadcasting thread
-        broadcast_thread = threading.Thread(target=MessageServer.handle_messages_from_queue, args=(client_connections, self.message_queue))
+        broadcast_thread = threading.Thread(target=MessageServer.handle_messages_from_queue, args=(client_connections, self.message_queue, chat_history))
         broadcast_thread.start()
 
         # Check if all clients received the message
@@ -61,6 +64,13 @@ class TestServer(unittest.TestCase):
             client_socket.close()
 
     def test_handle_client_message(self):
+        # Bind the socket to a specific IP and port
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server_socket.bind(('127.0.0.1', 8888))
+
+        # Listen for incoming connections
+        self.server_socket.listen(5)
+
         # Mock client connection
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect(('127.0.0.1', 8888))

@@ -98,13 +98,16 @@ class MessageClient:
     def receive_messages(self, client_socket):
         while True:
             try:
-                message = get_unpacked_message(client_socket)
-                formatted_message = f"\n> {message}\n>"
-                self.chat_history.append(formatted_message)
-                print(formatted_message)
+                self.handle_message(client_socket)
             except Exception as e:
                 print(f"Error receiving message: {e}")
                 break
+
+    def handle_message(self, client_socket):
+        message = get_unpacked_message(client_socket)
+        self.chat_history.append(message)
+        formatted_message = f"\n> {message}\n>"
+        print(formatted_message)
 
     @staticmethod
     def send_message(client_socket, message):
