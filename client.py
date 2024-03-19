@@ -13,8 +13,12 @@ from messaging.message import get_unpacked_message, pack_message
 def parse_args():
     parser = argparse.ArgumentParser(description="Client for chat application.")
     parser.add_help = True
+    parser.add_argument("--server_ip", type=str, default='127.0.0.1',
+                        help="IP address of the server (default: 127.0.0.1)")
+    parser.add_argument("--server_port", type=int, default=8888, help="Port number of the server (default: 8888)")
     parser.add_argument("--is_ai", action="store_true", default=False,
-                        help="Whether the client should be controlled by AI (default: False). If selected, the OPENAI_API_KEY environment variable is required.")
+                        help="Whether the client should be controlled by AI (default: False). If selected, "
+                             "the OPENAI_API_KEY environment variable is required.")
     parser.add_argument("--response_strategy", choices=["timed", "count"], default="timed",
                         help="Response strategy for AI (default: timed)")
     parser.add_argument("--ai_message_interval", type=int, default=5,
@@ -152,5 +156,10 @@ if __name__ == '__main__':
         print("ERROR: OPENAI_API_KEY environment variable is not set.")
         exit(1)
 
-    client = MessageClient(ai_message_interval=args.ai_message_interval, ai_time_interval=args.ai_time_interval)
+    client = MessageClient(
+        address=args.server_ip,
+        port=args.server_port,
+        ai_message_interval=args.ai_message_interval,
+        ai_time_interval=args.ai_time_interval
+    )
     client.start(is_ai=args.is_ai, response_strategy=args.response_strategy)

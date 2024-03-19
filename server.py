@@ -1,8 +1,18 @@
+import argparse
 from socket import socket as web_socket, AF_INET, SOCK_STREAM
 import threading
 from queue import Queue
 
 from messaging.message import pack_message, get_unpacked_message
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Server for chat application.")
+    parser.add_help = True
+    parser.add_argument("--server_ip", type=str, default='127.0.0.1',
+                        help="IP address of the server (default: 127.0.0.1)")
+    parser.add_argument("--server_port", type=int, default=8888, help="Port number of the server (default: 8888)")
+    return parser.parse_args()
 
 
 class MessageServer:
@@ -115,5 +125,10 @@ class MessageServer:
 
 
 if __name__ == '__main__':
-    server = MessageServer()
+    # Parse command line arguments
+    args = parse_args()
+    server = MessageServer(
+        address=args.server_ip,
+        port=args.server_port
+    )
     server.start()
